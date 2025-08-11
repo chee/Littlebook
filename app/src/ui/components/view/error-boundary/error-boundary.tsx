@@ -1,6 +1,6 @@
 import "./error-boundary.css"
 import type {FileEntryDoc} from ":/docs/file-entry-doc.ts"
-import type {View} from "@littlebook/plugin-api/types/view.ts"
+import type {View} from ":/types/view"
 import {createEffect, ErrorBoundary, type JSX} from "solid-js"
 
 export default function ViewErrorBoundary(props: {

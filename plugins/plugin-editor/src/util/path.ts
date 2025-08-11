@@ -1,6 +1,6 @@
 import type {DocHandle, Prop} from "@automerge/vanillajs"
 import type {Doc} from "@automerge/automerge"
-import type {LittlebookPluginShape} from "@littlebook/plugin-api/workers/shapes.ts"
+import type {LittlebookPluginShape} from "../shapes/shapes.ts"
 
 export type LBPSrcPath = ["src", ...Prop[]]
 export type LBPSrcFilePath = ["src", ...Prop[], string]

@@ -14,7 +14,7 @@ import {makeDocumentProjection} from "solid-automerge"
 import Icon from ":/ui/components/icons/icon.tsx"
 import {dropTargetForElements} from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import usePerfectRepo from ":/lib/sync/useRepo.ts"
-import type {FolderShape} from "@littlebook/plugin-api/shapes/shapes.ts"
+import type {FolderShape} from ":/shapes/shapes.ts"
 import reparent from ":/domain/reparent.ts"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import {useHomeHandle, useUserContext} from ":/domain/user/user.ts"
@@ -30,7 +30,7 @@ export default function DocumentListWidget(props: {
 	const [expanded, setExpanded] = createSignal<boolean | undefined>()
 
 	createEffect(() => {
-		let stored = localStorage.getItem(
+		const stored = localStorage.getItem(
 			`littlebook:${props.handle?.url}:expanded`,
 		)
 

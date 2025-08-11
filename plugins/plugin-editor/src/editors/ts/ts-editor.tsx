@@ -15,16 +15,16 @@ import {
 	tsTwoslash,
 } from "@valtown/codemirror-ts"
 import {autocompletion} from "@codemirror/autocomplete"
-import {type WorkerShape} from "@valtown/codemirror-ts/worker"
-import type {LittlebookPluginShape} from "../../shapes/shapes.ts"
-import type {DocHandle, Prop} from "@automerge/vanillajs"
+
+
+
 import {
 	getTypescriptEnvPath,
 	getExtension,
-	type LBPSrcFilePath,
+
 } from "../../util/path.ts"
 import {createBaseEditor, type BaseEditorOpts} from "../base/base-editor.tsx"
-import type {PluginEditorWorker} from "../../worker/worker.ts"
+
 
 const extLangMap = {
 	js: javascriptLanguage,

@@ -3,10 +3,10 @@
 
 import * as OCIF from "../../types/v0.4.ts"
 import type {
-	AutomergeFileEditor,
-	AutomergeFileEditorAPI,
+	AutomergeDocumentEditorView,
+	AutomergeDocumentEditorAPI,
 	ViewID,
-} from "@littlebook/plugin-api/types/view.ts"
+} from ":/types/view.ts"
 import {oCIFCore04Schema} from "../../shapes/v0.4.ts"
 import {OCIFCore04} from "../../types/v0.4.ts"
 import {createRoot} from "react-dom/client"
@@ -30,10 +30,10 @@ export default {
 		return div
 	},
 	schema: oCIFCore04Schema,
-} satisfies AutomergeFileEditor<OCIFCore04>
+} satisfies AutomergeDocumentEditorView<OCIFCore04>
 
 export function ExcalidrawView(props: {
-	api: AutomergeFileEditorAPI<OCIFCore04>
+	api: AutomergeDocumentEditorAPI<OCIFCore04>
 }) {
 	const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawImperativeAPI>()
 	useEffect(() => {

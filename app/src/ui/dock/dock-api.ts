@@ -7,13 +7,13 @@ import {
 	type DocumentURL,
 } from ":/core/sync/url.ts"
 import {usePerfectView} from ":/ui/components/view/usePerfectView"
-import type {StandaloneViewID} from "@littlebook/plugin-api/types/view.ts"
+import type {StandaloneViewID} from ":/types/view"
 import type {
 	DockviewApi,
 	DockviewIDisposable,
 	SerializedDockview,
 } from "dockview-core"
-import {getOwner, onCleanup, runWithOwner} from "solid-js"
+import {onCleanup} from "solid-js"
 import {createStore} from "solid-js/store"
 
 export interface OpenDocumentOptions {
@@ -24,7 +24,6 @@ export interface OpenDocumentOptions {
 type PanelID = DocumentURL | StandaloneViewID
 
 export function createDockAPI(dockviewAPI: DockviewApi) {
-	const owner = getOwner()!
 	function loadLayout(layout: SerializedDockview): Error | undefined {
 		try {
 			dockviewAPI.fromJSON(layout)
@@ -34,83 +33,68 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 	}
 	const [dockAPI, updateAPI] = createStore({
 		openStandaloneView(id: StandaloneViewID, opts?: OpenDocumentOptions) {
-			runWithOwner(getOwner() ?? owner, () => {
-				dockviewAPI.addPanel({
-					id: id.startsWith("standalone:") ? id : `standalone:${id}`,
-					component: "standalone",
-					tabComponent: "standalone",
-					renderer: "always",
-					position: opts?.side ? {direction: opts.side} : undefined,
-				})
+			dockviewAPI.addPanel({
+				id: id.startsWith("standalone:") ? id : `standalone:${id}`,
+				component: "standalone",
+				tabComponent: "standalone",
+				renderer: "always",
+				position: opts?.side ? {direction: opts.side} : undefined,
 			})
 		},
 		openDocument(url: AutomergeURLOrDocumentURL, opts?: OpenDocumentOptions) {
 			const component = opts?.component ?? "document"
-			runWithOwner(getOwner() ?? owner, () => {
-				const docinfo = parseDocumentURL(url as DocumentURL)
-				if (!docinfo.editor) {
-					const perfectEditor = usePerfectView(() => url as DocumentURL)()
-					if (perfectEditor) {
-						docinfo.editor = perfectEditor.id
-						url = renderDocumentURL(docinfo)
-					}
+			const docinfo = parseDocumentURL(url as DocumentURL)
+			if (!docinfo.viewer) {
+				const perfectEditor = usePerfectView(() => url as DocumentURL)()
+				if (perfectEditor) {
+					docinfo.viewer = perfectEditor.id
+					url = renderDocumentURL(docinfo)
 				}
+			}
 
-				const existing = dockviewAPI.getPanel(url)
+			const existing = dockviewAPI.getPanel(url)
 
-				if (existing) {
-					existing.api.setActive()
-				} else {
-					dockviewAPI.addPanel({
-						id: url,
-						component,
-						tabComponent: component,
-						renderer: "always",
-						position: opts?.side ? {direction: opts.side} : undefined,
-					})
-				}
-			})
+			if (existing) {
+				existing.api.setActive()
+			} else {
+				dockviewAPI.addPanel({
+					id: url,
+					component,
+					tabComponent: component,
+					renderer: "always",
+					position: opts?.side ? {direction: opts.side} : undefined,
+				})
+			}
 		},
 		loadLayout,
-		loadLayoutFromLocalstorage(key = "layout"): Result<Unit, Error> {
+		loadLayoutFromLocalstorage(key = "layout"): Error | undefined {
 			const layoutJSON = localStorage.getItem(key)
 			try {
 				const layout = JSON.parse(layoutJSON!)
 				return loadLayout(layout)
 			} catch (error) {
-				return err(
-					error instanceof Error
-						? error
-						: new Error("failed to load layout from localStorage"),
-				)
+				return error instanceof Error
+					? error
+					: new Error("failed to load layout from localStorage")
 			}
 		},
 		onLayoutChange(fn: () => void) {
-			runWithOwner(getOwner() ?? owner, () => {
-				const disposer = dockviewAPI.onDidLayoutChange(fn)
-				onCleanup(() => disposer.dispose())
-			})
+			const disposer = dockviewAPI.onDidLayoutChange(fn)
+			onCleanup(() => disposer.dispose())
 		},
 		closePanel(id: PanelID) {
-			runWithOwner(getOwner() ?? owner, () => {
-				dockviewAPI.getPanel(id)?.api.close()
-			})
+			dockviewAPI.getPanel(id)?.api.close()
 		},
 		closeGroup(id: string) {
-			runWithOwner(getOwner() ?? owner, () => {
-				dockviewAPI.getGroup(id)?.api.close()
-			})
+			dockviewAPI.getGroup(id)?.api.close()
 		},
 		serializeLayout() {
 			return dockviewAPI.toJSON()
 		},
-		activePanelID: runWithOwner(
-			getOwner() ?? owner,
-			() => dockviewAPI.activePanel?.id as PanelID | undefined,
-		),
-		panelIDs: runWithOwner(getOwner() ?? owner, () =>
-			dockviewAPI.panels.map(p => p.id as PanelID),
-		)!,
+		activePanelID: dockviewAPI.activePanel?.id as PanelID | undefined,
+
+		panelIDs: dockviewAPI.panels.map(p => p.id as PanelID),
+
 		// todo this is very specific.
 		isPressed(panelID: AutomergeURLOrDocumentURL | StandaloneViewID) {
 			const active = dockAPI.activePanelID
@@ -142,11 +126,13 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 		}),
 	)
 
-	onCleanup(() => {
-		for (const disposer of disposers) {
-			disposer.dispose()
-		}
-	})
+	// onCleanup(() => {
+	// 	for (const disposer of disposers) {
+	// 		disposer.dispose()
+	// 	}
+	// })
 
 	return dockAPI
 }
+
+export type DockAPI = ReturnType<typeof createDockAPI>

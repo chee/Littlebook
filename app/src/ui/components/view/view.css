@@ -32,8 +32,10 @@
 	--view-status-item-border-line--active: transparent;
 }
 
-.view {
+.view,
+little-view {
 	height: 100%;
+	width: 100%;
 	overflow: scroll;
 	background: var(--view-fill);
 	color: var(--view-line);
@@ -44,18 +46,6 @@
 .view-shadow-root {
 	height: 100%;
 	overflow: hidden;
-}
-
-littlebook-view {
-	&,
-	> div {
-		height: 100%;
-		overflow: scroll;
-		background: var(--view-fill);
-		color: var(--view-line);
-		display: flex;
-		flex-direction: column;
-	}
 }
 
 .view__content {

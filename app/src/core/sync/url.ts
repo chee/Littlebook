@@ -1,8 +1,8 @@
 import {isValidAutomergeUrl, type AutomergeUrl} from "@automerge/vanillajs"
 
 /**
- * littlebook+automerge://<docid>#<head>[/path/to/prop]?editor=editor
- * littlebook+opfs://path/to/file?editor=editor
+ * littlebook+automerge://<docid>#<head>[/path/to/prop]?viewer=viewer
+ * littlebook+opfs://path/to/file?viewer=viewer
  * littlebook+magnet
  */
 
@@ -14,7 +14,7 @@ export type AutomergeURLOrDocumentURL = DocumentURL | AutomergeURL
 
 type ParsedDocumentURL = Record<string, string> & {
 	url: AutomergeUrl
-	editor?: string
+	viewer?: string
 }
 
 export const isValidAutomergeURL = isValidAutomergeUrl
@@ -72,10 +72,21 @@ export function renderDocumentURL(docinfo: ParsedDocumentURL): DocumentURL {
 	return u.toString() as DocumentURL
 }
 
-interface LittlebookIndexedDBURLDescriptor {
-	type: "indexeddb"
-	key: string
+interface LittlebookFileURLDescriptor {
+	type: "file"
+	path: string
+	meta: Record<string, string>
 }
+
+interface LittlebookAutomergeURLDescriptor {
+	type: "automerge"
+	url: AutomergeURL
+	meta: Record<string, string>
+}
+
+export type LittlebookURLDescriptor =
+	| LittlebookFileURLDescriptor
+	| LittlebookAutomergeURLDescriptor
 
 export function parseLittlebookURL(
 	url: LittlebookURL,
@@ -88,6 +99,6 @@ export function parseLittlebookURL(
 		throw new Error(`invalid littlebook URL: ${url}`)
 	}
 	const docinfo = parseDocumentURL(u.pathname as DocumentURL)
-	docinfo.editor = u.searchParams.get("editor") ?? undefined
+	docinfo.viewer = u.searchParams.get("viewer") ?? undefined
 	return docinfo
 }

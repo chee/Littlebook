@@ -1,15 +1,11 @@
 import {automergeSyncPlugin} from "@automerge/automerge-codemirror"
 import {EditorView} from "@codemirror/view"
-import {CodeShape} from "@littlebook/plugin-api/shapes/shapes.ts"
-import type {
-	AutomergeFileEditor,
-	AutomergeFileEditorAPI,
-	ViewID,
-} from "@littlebook/plugin-api/types/view.ts"
+import type {AutomergeDocumentEditorAPI, ViewID} from ":/types/view"
 import {minimalSetup} from "codemirror"
+import type {CodeShape} from ":/shapes/shapes.ts"
 // import {CodeSchema, FileEditor, type FileEditorAPI} from "+types+"
 
-function render(props: AutomergeFileEditorAPI<CodeShape>) {
+function render(props: AutomergeDocumentEditorAPI<CodeShape>) {
 	const editor = new EditorView({
 		doc: props.handle.doc()?.text,
 		extensions: [
@@ -33,5 +29,5 @@ export default {
 	styles: [
 		".cm-editor, .cm-scroller, .cm-content {height: 100%; display: flex; flex-direction: column; overflow: auto;}",
 	],
-	schema: CodeShape,
-} satisfies AutomergeFileEditor<CodeShape>
+	schema: window.littlebook.shapes.CodeShape,
+}

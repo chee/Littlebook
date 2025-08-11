@@ -1,6 +1,6 @@
 import "./shadow.css"
 import resolveStyles from ":/ui/components/view/resolveStyles.ts"
-import type {ViewID, ViewStylesType} from "@littlebook/plugin-api/types/view.ts"
+import type {ViewID, ViewStylesType} from ":/types/view"
 import {
 	createEffect,
 	createSignal,

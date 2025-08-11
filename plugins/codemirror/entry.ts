@@ -1,17 +1,16 @@
-import type {ViewID} from "@littlebook/plugin-api/types/view.ts"
+import type {ViewID} from ":/types/view.ts"
 import codemirrorEditor from "./codemirror-editor.ts"
 import minimal from "./minimal.ts"
-import type PluginAPI from "@littlebook/plugin-api"
-import {CodeShape} from "@littlebook/plugin-api/shapes/shapes.ts"
 
-export default function CodeMirrorPlugin(api: PluginAPI) {
-	api.registerView(codemirrorEditor)
-	api.registerView(minimal)
-	api.registerView({
+export default function CodeMirrorPlugin() {
+	window.lb.registerView(codemirrorEditor)
+	window.lb.registerView(minimal)
+	window.lb.registerView({
 		id: "@littlebook/text.language" as ViewID,
 		category: "indicator",
 		displayName: "Language Indicator",
-		schema: CodeShape,
+		// todo these well known shapes need to have shared types
+		schema: window.littlebook.shapes.CodeShape,
 		render(api) {
 			const span = document.createElement("span")
 			span.textContent = api.doc().language || "plain"

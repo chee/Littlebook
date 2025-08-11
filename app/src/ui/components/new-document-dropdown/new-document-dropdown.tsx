@@ -5,7 +5,6 @@ import type {
 	AutomergeMapValue,
 	FileEntryTemplate,
 } from ":/docs/file-entry-doc.ts"
-import {useSourceRegistry} from "@littlebook/plugin-api"
 
 export function BigPlus() {
 	return (
@@ -28,7 +27,6 @@ export function BigPlus() {
 export default function NewDocumentMenu(props: {
 	create(template: FileEntryTemplate): void
 }) {
-	const sources = useSourceRegistry()
 	return (
 		<DropdownMenu>
 			<DropdownMenu.Trigger
@@ -47,7 +45,7 @@ export default function NewDocumentMenu(props: {
 						</DropdownMenu.SubTrigger>
 						<DropdownMenu.Portal>
 							<DropdownMenu.SubContent class="popmenu__sub-content">
-								<For each={Object.values(sources.records)}>
+								<For each={Object.values(window.littlebook.sources)}>
 									{source => {
 										if (source.category !== "new") return
 										return (

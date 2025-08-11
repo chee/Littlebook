@@ -1,15 +1,5 @@
-import {createDockview, type DockviewApi} from "dockview-core"
-import {
-	createContext,
-	onCleanup,
-	useContext,
-	type Component,
-	type JSX,
-	type ParentComponent,
-	Show,
-	splitProps,
-	createRoot,
-} from "solid-js"
+import {createDockview} from "dockview-core"
+import {type Component, Show, createRoot} from "solid-js"
 import "./dockview.css"
 import "./dock.css"
 import {createDockAPI} from "./dock-api.ts"
@@ -27,7 +17,7 @@ export interface DockHeaderActionProps {
 	dockAPI: DockAPI
 }
 
-function createDockContext(dockOptions: {
+export function createDockContext(dockOptions: {
 	components: Record<string, Component<DockComponentProps>>
 	tabComponents?: Record<string, Component<DockComponentProps>>
 	rightHeaderActionComponent?: Component<DockHeaderActionProps>
@@ -35,7 +25,7 @@ function createDockContext(dockOptions: {
 }) {
 	const element = (<div style={{display: "contents"}} />) as HTMLDivElement
 
-	const dockviewAPI = createDockview(element, {
+	const dockview = createDockview(element, {
 		createComponent(options) {
 			const component = () => dockOptions.components[options.name]
 			if (!component()) {
@@ -48,7 +38,7 @@ function createDockContext(dockOptions: {
 						<Dynamic
 							component={component()}
 							id={options.id as DocumentURL}
-							dockAPI={dockAPI}
+							dockAPI={api}
 						/>
 					</Show>
 				</div>
@@ -71,7 +61,7 @@ function createDockContext(dockOptions: {
 						<Dynamic
 							component={component()}
 							id={options.id as DocumentURL}
-							dockAPI={dockAPI}
+							dockAPI={api}
 						/>
 					</Show>
 				</div>
@@ -89,7 +79,7 @@ function createDockContext(dockOptions: {
 						<Dynamic
 							component={component()}
 							groupID={options.id}
-							dockAPI={dockAPI}
+							dockAPI={api}
 						/>
 					</Show>
 				</div>
@@ -118,91 +108,8 @@ function createDockContext(dockOptions: {
 		},
 	})
 
-	const dockAPI = createDockAPI(dockviewAPI)
-	return {element, dockAPI, dockviewAPI}
+	const api = createDockAPI(dockview)
+	return [element, api] as const
 }
-
-type DockContext = ReturnType<typeof createDockContext>
-
-export const DockProvider: ParentComponent<
-	Parameters<typeof createDockContext>[0]
-> = dockProviderProps => {
-	const [props, dockContextOptions] = splitProps(dockProviderProps, [
-		"children",
-	])
-
-	const dockContext = createDockContext(dockContextOptions)
-
-	onCleanup(() => {
-		dockContext.dockviewAPI.dispose()
-	})
-
-	return (
-		<DockContext.Provider value={dockContext}>
-			<DockAPIContext.Provider value={dockContext.dockAPI}>
-				<DockviewAPIContext.Provider value={dockContext.dockviewAPI}>
-					<DockElementContext.Provider value={dockContext.element}>
-						{props.children}
-					</DockElementContext.Provider>
-				</DockviewAPIContext.Provider>
-			</DockAPIContext.Provider>
-		</DockContext.Provider>
-	)
-}
-
-export const Dock: Component = (props: JSX.HTMLAttributes<HTMLDivElement>) => {
-	const element = useContext(DockElementContext)
-
-	return (
-		<div class="dock" {...props}>
-			{element}
-		</div>
-	)
-}
-
-export const DockContext = createContext<DockContext>()
-
-export const DockviewAPIContext = createContext<DockviewApi>()
 
 export type DockAPI = ReturnType<typeof createDockAPI>
-export const DockAPIContext = createContext<DockAPI>()
-
-export function useDockAPI() {
-	const context = useContext(DockAPIContext)
-
-	if (context === undefined) {
-		throw new Error(
-			"[dock]: `useDockAPI` must be used within a `Dock` component",
-		)
-	}
-
-	return context
-}
-
-export const DockElementContext = createContext<HTMLElement>()
-
-export function useDockElement() {
-	const context = useContext(DockElementContext)
-
-	if (context === undefined) {
-		throw new Error(
-			"[dock]: `useDockElement` must be used within a `Dock` component",
-		)
-	}
-
-	return context
-}
-
-export function useDockviewAPI() {
-	const context = useContext(DockviewAPIContext)
-
-	if (context === undefined) {
-		throw new Error(
-			"[dock]: `useDockviewContext` must be used within a `Dock` component",
-		)
-	}
-
-	return context
-}
-
-export default DockProvider

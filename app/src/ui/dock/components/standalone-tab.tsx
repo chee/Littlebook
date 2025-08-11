@@ -1,25 +1,23 @@
 import {ContextMenu} from "@kobalte/core/context-menu"
 import {Button} from "@kobalte/core/button"
 import {createEffect, Suspense} from "solid-js"
-import {useDockAPI} from "../dock.tsx"
 import {
 	normalizeStandaloneViewID,
 	type StandaloneView,
 	type StandaloneViewID,
-} from "@littlebook/plugin-api/types/view.ts"
-import {useViewRegistry} from "@littlebook/plugin-api"
+} from ":/types/view.ts"
 
 // todo StandaloneViewID type
 export default function StandaloneViewTab(props: {id: StandaloneViewID}) {
-	const dockAPI = useDockAPI()
+	return "tab"
 	const id = () => normalizeStandaloneViewID(props.id)
-	const view = () => useViewRegistry().get(id()) as StandaloneView | undefined
+	const view = () => self.littlebook.views[id()]
 	let tabElement!: HTMLDivElement
 
-	createEffect(() => {
-		if (!dockAPI) return
-		if (dockAPI.activePanelID == props.id) tabElement.scrollIntoView()
-	})
+	createEffect(
+		() =>
+			self.lb.dock.activePanelID == props.id && tabElement.scrollIntoView(),
+	)
 	// todo extract shared stuff with dock-tab
 
 	return (
@@ -39,7 +37,7 @@ export default function StandaloneViewTab(props: {id: StandaloneViewID}) {
 								event.stopPropagation()
 								event.preventDefault()
 							}}
-							onclick={() => dockAPI.closePanel(props.id)}>
+							onclick={() => self.lb.dock.closePanel(props.id)}>
 							<svg
 								class="x"
 								xmlns="http://www.w3.org/2000/svg"
@@ -59,14 +57,14 @@ export default function StandaloneViewTab(props: {id: StandaloneViewID}) {
 					<ContextMenu.Content class="popmenu__content">
 						<ContextMenu.Item
 							class="popmenu__item"
-							onSelect={() => dockAPI.closePanel(props.id)}>
+							onSelect={() => self.lb.dock.closePanel(props.id)}>
 							close tab
 						</ContextMenu.Item>
 						<ContextMenu.Item
 							class="popmenu__item"
 							onSelect={() => {
-								for (const id of dockAPI.panelIDs)
-									if (id != props.id) dockAPI.closePanel(id)
+								for (const id of self.lb.dock.panelIDs)
+									if (id != props.id) self.lb.dock.closePanel(id)
 							}}>
 							close other tabs
 						</ContextMenu.Item>

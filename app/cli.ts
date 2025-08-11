@@ -16,11 +16,11 @@ const repo = new Repo({
 	],
 })
 
-// const home = await repo.find(
-// 	"automerge:PkMLhgt3mDAao6MeFycx7hNRF4o" as AutomergeUrl,
-// )
-
-import REPL from "node:repl"
-const repl = REPL.start({useGlobal: true})
-repl.context.repo = repo
-// repl.context.home = home
+import repl from "node:repl"
+const session = repl.start({
+	useGlobal: true,
+	useColors: true,
+	prompt: "[littlebook] $ ",
+})
+session.context.repo = repo
+session.on("exit", () => process.exit(0))

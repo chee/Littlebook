@@ -4,7 +4,6 @@ import Icon from "../components/icons/icon.tsx"
 import type {OpenDocumentOptions} from "./dock-api.ts"
 import {renderDocumentURL, type DocumentURL} from ":/core/sync/url.ts"
 import type {FileEntry} from ":/domain/entry/file-entry.ts"
-import {useViewRegistry} from "@littlebook/plugin-api"
 
 export default function OpenWithContextMenu(props: {
 	entry: FileEntry
@@ -12,8 +11,7 @@ export default function OpenWithContextMenu(props: {
 	currentEditorID?: string
 	openDocument: (url: DocumentURL, opts: OpenDocumentOptions) => void
 }) {
-	const viewRegistry = useViewRegistry()
-	const views = () => [...(viewRegistry.views(props.file) ?? [])]
+	const views = () => self.littlebook.getViews(props.file)
 
 	return (
 		<Show when={views().length > 1}>
@@ -33,7 +31,7 @@ export default function OpenWithContextMenu(props: {
 									onSelect={() => {
 										const url = renderDocumentURL({
 											url: props.entry.url,
-											editor: choice.id,
+											viewer: choice.id,
 										})
 										props.openDocument(url, {side: "right"})
 									}}

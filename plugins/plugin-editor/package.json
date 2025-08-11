@@ -35,7 +35,6 @@
 		"@corvu/resizable": "^0.2.5",
 		"@kobalte/core": "^0.13.9",
 		"@lezer/highlight": "^1.2.1",
-		"@littlebook/plugin-api": "workspace:~",
 		"@replit/codemirror-css-color-picker": "^6.3.0",
 		"@solid-primitives/map": "^0.7.1",
 		"@solid-primitives/set": "^0.7.1",

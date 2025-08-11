@@ -1,5 +1,3 @@
-import type {CreateSource} from "@littlebook/plugin-api/types/source.ts"
-import type PluginAPI from "@littlebook/plugin-api"
 import view from "./src/views/plugin-editor.tsx"
 import dedent from "dedent"
 import type {LittlebookPluginShape} from "./src/shapes/shapes.ts"
@@ -45,6 +43,7 @@ const defaultPluginSrc = {
 			displayName: "Counter",
 			category: "editor",
 			icon: "🔢",
+			schema: CountShape,
 			render(api) {
 				const doc = makeDocumentProjection<CountShape>(api.handle)
 				const count = () => doc.count
@@ -76,7 +75,7 @@ const createPlugin: CreateSource<LittlebookPluginShape> = {
 	},
 }
 
-export default function activeCodeMirrorPluginEditor(api: PluginAPI) {
-	api.registerView(view)
-	api.registerSource(createPlugin)
+export default function activeCodeMirrorPluginEditor() {
+	window.littlebook.registerView(view)
+	window.littlebook.registerSource(createPlugin)
 }

@@ -5,14 +5,16 @@ import {curl} from ":/core/sync/automerge.ts"
 
 export type UserURL = AutomergeURL & {type: "user"}
 
+// todo some of this belongs on the WorkspaceDoc
 export interface UserDoc {
 	type: "user"
 	name: string
 	picture?: Uint8Array
+	// todo does a user even have a home?
 	home: AreaURL
 	areas: AreaURL[]
 	associations: Record<FileEntryURL, string>
-	plugins: Record<AutomergeURL, boolean>
+	activePlugins: Record<AutomergeURL, boolean>
 }
 
 export function createUserDoc(
@@ -23,7 +25,7 @@ export function createUserDoc(
 		type: "user",
 		areas: [],
 		associations: {},
-		plugins: {},
+		activePlugins: {},
 		...user,
 	}
 }

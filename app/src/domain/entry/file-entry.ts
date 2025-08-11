@@ -17,7 +17,7 @@ import {createMemo, useContext} from "solid-js"
 import cache from "../cache.ts"
 
 export function useFileEntry(url: FileEntryURL) {
-	const handle = useDocHandle<FileEntryDoc>(url)
+	const handle = useDocHandle<FileEntryDoc>(url, {repo: defaultRepo})
 	return createMemo(() => handle() && createFileEntry(handle()!))
 }
 

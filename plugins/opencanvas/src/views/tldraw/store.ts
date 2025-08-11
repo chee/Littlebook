@@ -34,7 +34,7 @@ export function useStore(handle: DocHandle<OCIFCore04>) {
 		}
 
 		//  unsubs.push(
-		//    store.listen(syncStoreChangesToAutomergeDoc, {
+		//    store.listen(syncStoreChangesToAutomergeDocument, {
 		//      source: "user",
 		//      scope: "document",
 		//    })
@@ -45,8 +45,8 @@ export function useStore(handle: DocHandle<OCIFCore04>) {
 			if (preventPatchApplications) return
 			// applyAutomergePatchesToTLStore(patches, store)
 		}
-		//  handle.on("change", syncAutomergeDocChangesToStore)
-		//  unsubs.push(() => handle.off("change", syncAutomergeDocChangesToStore))
+		//  handle.on("change", syncAutomergeDocumentChangesToStore)
+		//  unsubs.push(() => handle.off("change", syncAutomergeDocumentChangesToStore))
 
 		const doc = handle.doc()
 		if (!doc) throw new Error("Document not found")

@@ -1,39 +1,41 @@
 import {ContextMenu} from "@kobalte/core/context-menu"
 import {Button} from "@kobalte/core/button"
 import {createEffect, createMemo, getOwner, runWithOwner, Show} from "solid-js"
-import {useDockAPI} from "../dock.tsx"
 import OpenWithContextMenu from "../open-with.tsx"
-import {parseDocumentURL, type DocumentURL} from ":/core/sync/url.ts"
+import {
+	parseDocumentURL,
+	type AutomergeURL,
+	type DocumentURL,
+} from ":/core/sync/url.ts"
 import {usePerfectView} from ":/ui/components/view/usePerfectView.tsx"
 import type {FileEntryURL} from ":/docs/file-entry-doc.ts"
 import {useFileEntry} from ":/domain/entry/file-entry.ts"
 import {save} from "@automerge/automerge"
+import {UserDoc} from ":/docs/user-doc.ts"
 
 export default function DocumentDockTab(props: {url: DocumentURL}) {
 	const docinfo = createMemo(() => parseDocumentURL(props.url as DocumentURL))
-	const dockAPI = useDockAPI()
 	const entry = useFileEntry(docinfo().url as FileEntryURL)
 
-	const editor = usePerfectView(() => props.url)
+	const view = usePerfectView(() => props.url)
 
 	let tabElement!: HTMLDivElement
 
 	createEffect(() => {
-		if (!dockAPI) return
-		if (dockAPI.activePanelID == props.url) {
+		if (self.lb.dock.activePanelID == props.url) {
 			tabElement.scrollIntoView()
 		}
 	})
 
 	const content = () => entry()?.content
 
-	const editorID = () => editor()?.id
+	const viewID = () => view()?.id
 
 	const owner = getOwner()
 	const openDocument = (
 		url: DocumentURL,
 		opts?: {side?: string; component?: string},
-	) => runWithOwner(owner, () => dockAPI.openDocument(url, opts))
+	) => runWithOwner(owner, () => self.lb.dock.openDocument(url, opts))
 
 	return (
 		<ContextMenu>
@@ -51,7 +53,7 @@ export default function DocumentDockTab(props: {url: DocumentURL}) {
 							event.preventDefault()
 						}}
 						onclick={() => {
-							dockAPI.closePanel(props.url)
+							self.lb.dock.closePanel(props.url)
 						}}>
 						<svg
 							class="x"
@@ -72,14 +74,14 @@ export default function DocumentDockTab(props: {url: DocumentURL}) {
 				<ContextMenu.Content class="popmenu__content">
 					<ContextMenu.Item
 						class="popmenu__item"
-						onSelect={() => dockAPI.closePanel(props.url)}>
+						onSelect={() => self.lb.dock.closePanel(props.url)}>
 						Close Tab
 					</ContextMenu.Item>
 					<ContextMenu.Item
 						class="popmenu__item"
 						onSelect={() => {
-							for (const id of dockAPI.panelIDs) {
-								if (id != props.url) dockAPI.closePanel(id)
+							for (const id of self.lb.dock.panelIDs) {
+								if (id != props.url) self.lb.dock.closePanel(id)
 							}
 						}}>
 						Close All Other Tabs
@@ -90,12 +92,33 @@ export default function DocumentDockTab(props: {url: DocumentURL}) {
 						onSelect={() => navigator.clipboard.writeText(props.url)}>
 						Copy URL
 					</ContextMenu.Item>
+					<ContextMenu.Item
+						class="popmenu__item"
+						// eslint-disable-next-line solid/reactivity
+						onSelect={async () => {
+							const userHandle = await window.repo.find<UserDoc>(
+								localStorage.getItem(
+									"littlebook:user-id",
+								) as AutomergeURL,
+							)
+
+							userHandle.change(user => {
+								if (!user.pinned) {
+									user.pinned = []
+								}
+								if (!user.pinned.includes(props.url)) {
+									user.pinned.push(props.url)
+								}
+							})
+						}}>
+						Pin to Sidebar
+					</ContextMenu.Item>
 
 					<Show when={content() && entry()}>
 						<OpenWithContextMenu
 							entry={entry()!}
 							file={content()}
-							currentEditorID={editorID()}
+							currentEditorID={viewID()}
 							openDocument={(url, opts) => openDocument(url, opts)}
 						/>
 					</Show>

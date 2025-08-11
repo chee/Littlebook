@@ -1,52 +1,46 @@
 import "./sidebar.css"
-import {For, getOwner, mapArray, runWithOwner, Show} from "solid-js"
-import DocumentListWidget from "./document-list/document-list-widget.tsx"
+import {For, Show} from "solid-js"
 import {useUserDocContext} from ":/domain/user/user.ts"
-import {useDocHandle, useDocument} from "solid-automerge"
+import {useDocument} from "solid-automerge"
 import {createFileEntry} from ":/docs/file-entry-doc.ts"
 import {AreaDoc} from ":/docs/area-doc.ts"
-import type {DocHandle} from "@automerge/automerge-repo"
-import {useDockAPI} from ":/ui/dock/dock.tsx"
-import {useViewRegistry} from "@littlebook/plugin-api"
 import NewDocumentMenu from ":/ui/components/new-document-dropdown/new-document-dropdown.tsx"
 import PreferencesIcon from ":/ui/icons/preferences.tsx"
+import LittlebookViewer from ":/ui/components/view/little-view"
 
 export default function Sidebar() {
 	const user = useUserDocContext()
 	const homeEntryURL = () => user()?.home
-	const [home, handle] = useDocument<AreaDoc>(homeEntryURL())
-	const viewRegistry = useViewRegistry()
-	const standalones = () => [...viewRegistry.standalones()]
-	const dock = useDockAPI()
-	const owner = getOwner()
+	const [, handle] = useDocument<AreaDoc>(homeEntryURL())
+
+	const standalones = () =>
+		Object.values(self.littlebook.views).filter(
+			view => view.category === "standalone",
+		)
 
 	return (
 		<aside class="sidebar sidebar--left ui">
 			<header class="sidebar-header">
 				<NewDocumentMenu
 					create={template => {
-						runWithOwner(owner, () => {
-							const url = createFileEntry(template)
-							dock.openDocument(url)
-							handle()?.change(doc => {
-								if (!doc.files.includes(url)) {
-									doc.files.push(url)
-								}
-							})
+						const url = createFileEntry(template)
+						self.littlebook.dock.openDocument(url)
+						handle()?.change(doc => {
+							if (!doc.files.includes(url)) {
+								doc.files.push(url)
+							}
 						})
 					}}
 				/>
 			</header>
 			<div class="sidebar-widgets">
-				<Show when={home()}>
-					<DocumentListWidget handle={handle() as DocHandle<AreaDoc>} />
-				</Show>
-				<For
-					each={mapArray(
-						() => user()?.areas,
-						area => useDocHandle<AreaDoc>(area),
-					)()}>
-					{areaHandle => <DocumentListWidget handle={areaHandle()!} />}
+				{/* todo pinned is a workspace concern, not a user concern */}
+				<For each={user()?.pinned ?? []}>
+					{url => (
+						<div style={{width: "100%"}}>
+							<little-view url={url} />
+						</div>
+					)}
 				</For>
 
 				<Show when={standalones().length}>
@@ -63,9 +57,9 @@ export default function Sidebar() {
 									<button
 										class="sidebar-widget__link"
 										onClick={() => {
-											runWithOwner(owner, () => {
-												dock.openStandaloneView(view.id)
-											})
+											self.littlebook.dock.openStandaloneView(
+												view.id,
+											)
 										}}>
 										<span>{view.icon || "💻"}</span>
 										<span>{view.displayName ?? view.id}</span>

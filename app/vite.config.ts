@@ -3,7 +3,6 @@ import devtools from "solid-devtools/vite"
 import wasm from "vite-plugin-wasm"
 import {VitePWA} from "vite-plugin-pwa"
 import autoprefixer from "autoprefixer"
-import netlify from "@netlify/vite-plugin"
 import paths from "vite-tsconfig-paths"
 import {vitePluginNativeImportMaps as maps} from "vite-plugin-native-import-maps"
 import solid from "vite-plugin-solid"
@@ -32,7 +31,6 @@ export default defineConfig({
 				"@automerge/automerge-repo",
 				"@automerge/vanillajs",
 				"valibot",
-				"@littlebook/plugin-api",
 				"react",
 				"react-dom",
 			],

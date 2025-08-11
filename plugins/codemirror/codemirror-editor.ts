@@ -12,15 +12,15 @@ import {githubLight as github} from "@uiw/codemirror-theme-github"
 
 import type {DocHandleChangePayload} from "@automerge/vanillajs"
 import type {
-	AutomergeFileEditor,
-	AutomergeFileEditorAPI,
+	AutomergeDocumentEditorView,
+	AutomergeDocumentEditorAPI,
 	ViewID,
-} from "@littlebook/plugin-api/types/view.ts"
-import {CodeShape} from "@littlebook/plugin-api/shapes/shapes.ts"
-import type {FileMenu} from "@littlebook/plugin-api/types/file-menu.ts"
+} from ":/types/view"
+import {CodeShape} from ":/shapes/shapes"
+import type {FileMenu} from ":/types/file-menu"
 
 function render(
-	props: AutomergeFileEditorAPI<CodeShape> & {
+	props: AutomergeDocumentEditorAPI<CodeShape> & {
 		path?: (string | number)[]
 	}
 ) {
@@ -272,6 +272,7 @@ function render(
 	return parent
 }
 
+// todo i do not like this
 export function getFileMenu() {
 	return [
 		{
@@ -338,4 +339,4 @@ export default {
 	`,
 	],
 	schema: CodeShape,
-} satisfies AutomergeFileEditor<CodeShape>
+} satisfies AutomergeDocumentEditorView<CodeShape>

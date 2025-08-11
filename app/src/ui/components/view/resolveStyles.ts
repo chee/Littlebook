@@ -1,4 +1,4 @@
-import type {ViewStylesType} from "@littlebook/plugin-api/types/view.ts"
+import type {ViewStylesType} from ":/types/view"
 
 export default function resolveStyles(
 	styles: ViewStylesType | ViewStylesType[],

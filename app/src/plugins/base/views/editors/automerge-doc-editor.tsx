@@ -14,7 +14,7 @@ import {createStore, reconcile} from "solid-js/store"
 import {createSolidTable, getCoreRowModel} from "@tanstack/solid-table"
 import {Schema} from "effect"
 import {setProperty} from "@littlebook/plugin-editor/src/util/path.ts"
-import type {AutomergeFileEditor} from "@littlebook/plugin-api/types/view.ts"
+import type {AutomergeDocumentEditorView, ViewID} from ":/types/view"
 
 function StringEditor(props: {value: string; change: (value: string) => void}) {
 	return (
@@ -139,10 +139,11 @@ function AutomergeEditor(props: {
 	) as HTMLElement
 }
 
-const AutomergeDocEditor = {
+const AutomergeDocumentEditor = {
 	category: "editor",
 	displayName: "automerge doc editor",
-	id: "automerge-doc-editor",
+	id: "automerge-doc-editor" as ViewID,
+	kind: "automerge",
 	schema: Schema.standardSchemaV1(
 		Schema.Record({key: Schema.String, value: Schema.Any}),
 	),
@@ -152,5 +153,5 @@ const AutomergeDocEditor = {
 			<AutomergeEditor json={doc()!} handle={props.handle} path={[]} />
 		) as HTMLElement
 	},
-} satisfies AutomergeFileEditor<object>
-export default AutomergeDocEditor
+} satisfies AutomergeDocumentEditorView<object>
+export default AutomergeDocumentEditor

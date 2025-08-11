@@ -10,7 +10,6 @@ import {
 } from "solid-js"
 import "./document-list.css"
 import {createDocumentProjection} from "solid-automerge"
-import {useDockAPI} from "../../../dock/dock.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import OpenWithContextMenu from "../../../dock/open-with.tsx"
 import type {OpenDocumentOptions} from "../../../dock/dock-api.ts"
@@ -29,7 +28,7 @@ import {
 	dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import {useFileEntry, type FileEntry} from ":/domain/entry/file-entry.ts"
-import {FolderShape} from "@littlebook/plugin-api/shapes/shapes.ts"
+import {FolderShape} from ":/shapes/shapes.ts"
 import {useUserContext} from ":/domain/user/user.ts"
 import {IconPicker} from ":/ui/components/emoji-picker/emoji-picker.tsx"
 import {pin} from ":/docs/user-doc.ts"
@@ -80,7 +79,6 @@ export default function DocumentList(props: {
 	parent: DocHandle<FolderShape> | undefined
 }) {
 	const owner = getOwner()
-	const dockAPI = useDockAPI()
 	const [_user, userHandle] = useUserContext()
 
 	return (

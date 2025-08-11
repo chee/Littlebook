@@ -1,14 +1,10 @@
-import type PluginAPI from "../../../../plugin-api/plugin-api.ts"
 import type {
 	CodeShape,
 	FolderShape,
 	MarkdownShape,
 	TextShape,
-} from "../../../../plugin-api/shapes/shapes.ts"
-import type {
-	CreateSource,
-	FilesystemSource,
-} from "@littlebook/plugin-api/types/source.ts"
+} from "../../shapes/shapes.ts"
+import type {CreateSource, FilesystemSource} from ":/types/source.ts"
 import type {FileEntryURL} from ":/docs/file-entry-doc.ts"
 
 const newFolder: CreateSource<FolderShape> = {
@@ -86,7 +82,8 @@ const importMarkdown: FilesystemSource<MarkdownShape> = {
 	},
 }
 
-export default function registerBaseSources(api: PluginAPI) {
+export default function registerBaseSources() {
+	const api = self.littlebook
 	api.registerSource(newFolder)
 	api.registerSource(newText)
 	api.registerSource(importText)

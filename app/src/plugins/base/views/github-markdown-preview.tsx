@@ -8,8 +8,8 @@ import remarkRehype from "remark-rehype"
 import gfm from "remark-gfm"
 import {unified} from "unified"
 import {Fragment, jsx, jsxs} from "solid-js/h/jsx-runtime"
-import type {FileViewer, ViewID} from "@littlebook/plugin-api/types/view.ts"
-import {MarkdownShape} from "@littlebook/plugin-api/shapes/shapes.ts"
+import type {AutomergeDocumentReadonlyView, ViewID} from ":/types/view"
+import {MarkdownShape} from ":/shapes/shapes"
 
 const markdown = await unified()
 	.use(gfm)
@@ -50,4 +50,4 @@ export default {
 			</div>
 		) as HTMLElement
 	},
-} satisfies FileViewer<MarkdownShape>
+} satisfies AutomergeDocumentReadonlyView<MarkdownShape>

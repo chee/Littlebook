@@ -1,10 +1,10 @@
 /** @jsxRuntime automatic */
 /** @jsxImportSource react */
 import type {
-	AutomergeFileEditor,
+	AutomergeDocumentEditorView,
 	FileEditorRenderFunction,
 	ViewID,
-} from "@littlebook/plugin-api/types/view.ts"
+} from ":/types/view.ts"
 import {oCIFCore04Schema} from "../../shapes/v0.4.ts"
 import {OCIFCore04} from "../../types/v0.4.ts"
 import {createRoot} from "react-dom/client"
@@ -30,4 +30,4 @@ export const TldrawView = {
 	render,
 	schema: oCIFCore04Schema,
 	styles: [import("tldraw/tldraw.css?inline"), ":host > div {height: 100%}"],
-} satisfies AutomergeFileEditor<OCIFCore04>
+} satisfies AutomergeDocumentEditorView<OCIFCore04>

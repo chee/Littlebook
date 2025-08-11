@@ -1,7 +1,7 @@
 import type {AutomergeURL} from ":/core/sync/url.ts"
 import {deleteAt} from "@automerge/automerge"
 import type {DocHandle} from "@automerge/automerge-repo"
-import {FolderShape} from "@littlebook/plugin-api/shapes/shapes.ts"
+import {FolderShape} from ":/shapes/shapes"
 
 export default async function reparent(
 	url: AutomergeURL,

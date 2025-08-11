@@ -10,10 +10,10 @@ render(
 	() => (
 		<Router root={AppLayout}>
 			<Route path="/" component={lazy(() => import("./pages/intro.tsx"))} />
-			<Route component={lazy(() => import("./layouts/logged-in.tsx"))}>
+			<Route component={lazy(() => import("./layouts/user.tsx"))}>
 				<Route
 					path="/app"
-					component={lazy(() => import("./pages/main.tsx"))}
+					component={lazy(() => import("./pages/workspace.tsx"))}
 				/>
 			</Route>
 		</Router>

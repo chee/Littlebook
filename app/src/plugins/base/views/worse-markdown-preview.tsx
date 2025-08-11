@@ -1,6 +1,6 @@
-import {createResource, createSignal} from "solid-js"
-import type {FileViewer, ViewID} from "@littlebook/plugin-api/types/view.ts"
-import {MarkdownShape} from "@littlebook/plugin-api/shapes/shapes.ts"
+import {createResource, createSignal, type JSX} from "solid-js"
+import type {AutomergeDocumentReadonlyView, ViewID} from ":/types/view"
+import {MarkdownShape} from ":/shapes/shapes"
 import rehypeReact from "rehype-react"
 import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
@@ -13,6 +13,7 @@ import type {Node} from "unist"
 import type {VFile} from "vfile"
 import type {Root as MdastRoot} from "mdast"
 import type {Root as HastRoot} from "hast"
+import rehypeRaw from "rehype-raw"
 
 /**
  * Parse YAML frontmatter and expose it at `file.data.matter`.
@@ -32,6 +33,7 @@ const markdown: Processor<MdastRoot, HastRoot, HastRoot> = unified()
 	.use(remarkFrontmatter)
 	.use(extractFrontmatter)
 	.use(remarkRehype, {allowDangerousHtml: true})
+	.use(rehypeRaw)
 	.use(rehypeReact, {
 		Fragment,
 		jsx,
@@ -53,20 +55,32 @@ export default {
 		props.onChange(() => updateText(props.doc().text))
 
 		const [html] = createResource(text, async text => {
-			return "lol"
+			const md = await markdown.process(text)
+			// @ts-expect-error shhhhh
+			const title = md.data?.matter?.title
+			if (title) {
+				return (
+					<>
+						<h1>{title}</h1>
+						{md.result}
+					</>
+				)
+			}
+			return md.result as JSX.Element
 		})
 
 		return (
 			<markdown-preview>
 				<div class="markdown-body">
-					<div class="markdown-content" innerHTML={html.latest}></div>
+					<div class="markdown-content">{html.latest}</div>
 				</div>
 			</markdown-preview>
 		) as HTMLElement
 	},
-} satisfies FileViewer<MarkdownShape>
+} satisfies AutomergeDocumentReadonlyView<MarkdownShape>
 
 declare module "solid-js" {
+	// eslint-disable-next-line @typescript-eslint/no-namespace
 	namespace JSX {
 		interface IntrinsicElements {
 			"markdown-preview": JSX.IntrinsicElements["div"]

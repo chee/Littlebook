@@ -1,0 +1,83 @@
+:root {
+	--document-tree-fill: var(--sidebar-widget-fill);
+	--document-tree-line: var(--sidebar-widget-line);
+}
+
+.document-tree {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 100%;
+	font-size: 0.9rem;
+	font-weight: 500;
+}
+
+.document-tree-item {
+	font-size: 1rem;
+	width: 100%;
+	text-align: left;
+	padding-inline: var(--sidebar-widget-padding);
+	padding-block: var(--space-2);
+	cursor: default;
+	user-select: none;
+	display: flex;
+
+	&[aria-pressed="true"] {
+		background: var(--selected-fill);
+		color: var(--selected-line);
+		&:last-child {
+			/* border-bottom-left-radius: calc(var(--sidebar-widget-radius)); */
+			/* border-bottom-right-radius: calc(var(--sidebar-widget-radius)); */
+		}
+	}
+}
+
+.document-tree-item--folder {
+	font-weight: 450;
+}
+
+.document-tree-item__name {
+	max-width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	text-align: center;
+	display: block;
+	margin-left: var(--space-2);
+}
+
+.document-tree-item__expander {
+	height: 1em;
+	width: 1em;
+	margin-left: auto;
+	margin-right: var(--space-05);
+}
+
+.document-tree [role="treeitem"]:last-of-type .document-tree__button {
+	border-end-start-radius: calc(var(--sidebar-widget-radius) - 1px);
+	border-end-end-radius: calc(var(--sidebar-widget-radius) - 1px);
+}
+
+.document-tree-item:not([data-droptarget]) {
+	border: 2px solid transparent;
+}
+
+.document-tree-item[data-droptarget="true"] {
+	background: var(--mynt-light);
+	border: 2px dashed black;
+}
+
+button {
+	/* reset */
+	background: transparent;
+	border: none;
+	color: inherit;
+	cursor: pointer;
+	font: inherit;
+	outline: none;
+	padding: 0;
+	text-align: left;
+	text-decoration: none;
+	appearance: none;
+}

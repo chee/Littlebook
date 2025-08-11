@@ -1,5 +1,5 @@
 import type {OCIFCore04} from "../types/v0.4.ts"
-import type {CreateSource} from "@littlebook/plugin-api/types/source.ts"
+import type {CreateSource} from ":/types/source.ts"
 
 export const createOpenCanvas04: CreateSource<OCIFCore04> = {
 	id: "opencanvas-0.4",
